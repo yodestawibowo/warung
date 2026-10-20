@@ -1,0 +1,15 @@
+# ==============================================================================
+# Cloudflare Tunnel Config for WARUNG RIMBUN
+# Target Hostname : warungrimbun.cloudpme.my.id
+# Tunnel ID       : 4b630e38-406c-4895-a80e-1fabea7a3b1b
+# ==============================================================================
+
+tunnel: 4b630e38-406c-4895-a80e-1fabea7a3b1b
+credentials-file: /etc/cloudflared/cert.json
+
+ingress:
+  - hostname: warungrimbun.cloudpme.my.id
+    service: http://warung-rimbun:80
+    originRequest:
+      noTLSVerify: true
+  - service: http_status:404

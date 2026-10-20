@@ -1,0 +1,8 @@
+{
+  "name": "WARUNG RIMBUN - WADAH URUN REMBUK PERENCANAAN DAN INOVASI PEMBANGUNAN",
+  "description": "WARUNG RIMBUN (Wadah Urun Rembuk Perencanaan dan Inovasi Pembangunan) - Platform partisipasi publik kolaboratif menghubungkan masyarakat, dunia usaha, akademisi, dan organisasi masyarakat sipil dalam perumusan dan pengawalan pembangunan RPJMD serta inovasi daerah.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

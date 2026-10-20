@@ -1,0 +1,66 @@
+name: warung-rimbun-with-tunnel
+
+services:
+  warung-rimbun:
+    container_name: warung-rimbun
+    image: warung-rimbun:latest
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "8880:80"
+    networks:
+      - default
+
+  # Cloudflare Tunnel Service (cloudflared)
+  # Menghubungkan aplikasi langsung ke domain publik: warungrimbun.cloudpme.my.id
+  cloudflared:
+    container_name: warung-rimbun-tunnel
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    entrypoint:
+      - /bin/sh
+      - -c
+      - |
+        if [ -n "$$TUNNEL_TOKEN" ]; then
+          exec cloudflared tunnel --no-autoupdate run --token "$$TUNNEL_TOKEN"
+        elif [ -f /etc/cloudflared/cert.json ]; then
+          exec cloudflared tunnel --no-autoupdate --config /etc/cloudflared/config.yml run
+        elif [ -f /etc/cloudflared/config.yml ]; then
+          exec cloudflared tunnel --no-autoupdate --config /etc/cloudflared/config.yml run
+        else
+          exec cloudflared tunnel --no-autoupdate run 4b630e38-406c-4895-a80e-1fabea7a3b1b
+        fi
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN:-}
+      - TUNNEL_ID=4b630e38-406c-4895-a80e-1fabea7a3b1b
+      - TUNNEL_HOSTNAME=warungrimbun.cloudpme.my.id
+    volumes:
+      - ./cloudflared:/etc/cloudflared:ro
+    depends_on:
+      - warung-rimbun
+    networks:
+      - default
+
+x-casaos:
+  architectures:
+    - amd64
+    - arm64
+    - arm
+  main: warung-rimbun
+  description:
+    en_us: "WARUNG RIMBUN with Cloudflare Tunnel - Public domain https://warungrimbun.cloudpme.my.id"
+    id_id: "WARUNG RIMBUN dengan Cloudflare Tunnel - Domain publik https://warungrimbun.cloudpme.my.id"
+  tag: "Planning & Governance"
+  thumbnail: "https://raw.githubusercontent.com/walkxcode/dashboard-icons/main/png/government.png"
+  title:
+    en_us: "WARUNG RIMBUN (warungrimbun.cloudpme.my.id)"
+    id_id: "WARUNG RIMBUN (warungrimbun.cloudpme.my.id)"
+  index: /
+  port_map: "8880"
+  scheme: http
+
+networks:
+  default:
+    driver: bridge
